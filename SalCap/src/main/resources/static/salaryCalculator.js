@@ -495,6 +495,19 @@ document.getElementById('toPdf').addEventListener('click', function(){
 /////////공유하기/////////////
 
 document.getElementById('shareButton').addEventListener('click', async () => {
+
+    if(document.querySelectorAll('.tableTab').length > 1){
+        kakaoAPI();
+    }
+    else{
+        alert("데이터를 저장해주세요");
+    }
+});
+
+function kakaoAPI() {
+    let userName = document.querySelector('.tabLabel.active').textContent;
+    let workText = document.querySelector('.tableTab.active > div').textContent
+    console.log(workText)
 	if (!Kakao.isInitialized()) {
     Kakao.init('e7dcd72b2b02b7e2846d9731a41a6554'); // 초기화는 단 한 번만 실행
 	}
@@ -502,8 +515,8 @@ document.getElementById('shareButton').addEventListener('click', async () => {
     Kakao.Link.sendDefault({
         objectType: 'feed',
         content: {
-            title: '테스트 제목',
-            description: '테스트 설명',
+            title: '근무시간 및 급여내역 입니다',
+            description: workText,
             imageUrl: 'https://example.com/image.png',
             link: {
                 webUrl: 'http://localhost:8080',
@@ -520,6 +533,5 @@ document.getElementById('shareButton').addEventListener('click', async () => {
             },
         ],
     });
-
-});
+}
 
