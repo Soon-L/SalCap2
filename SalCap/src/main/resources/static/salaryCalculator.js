@@ -486,6 +486,17 @@ function downloadPDF() {
         
     });
 }
+// 2024.12.27 데이터 미저장시 예외처리 - 이순
+document.getElementById('toPdf').addEventListener('click', function(){
+    const resultData = document.querySelector('.resultData');
+    if(!resultData){
+        alert('데이터를 저장해주세요.');
+        return;
+    }
+    downloadPDF();
+})
+
+
 
 document.getElementById('toPdf').addEventListener('click', function(){
     downloadPDF();
