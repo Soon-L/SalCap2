@@ -1,5 +1,7 @@
 // 근무 기록 추가 버튼 이벤트
-document.getElementById('addWorkRecordButton').addEventListener('click', function () {
+document.getElementById('addWorkRecordButton').addEventListener('click', add_work_record);
+
+function add_work_record(){
     const workRecordsContainer = document.getElementById('workRecordsContainer');
 
     // 새로운 근무 기록 필드 생성
@@ -51,8 +53,7 @@ document.getElementById('addWorkRecordButton').addEventListener('click', functio
     recordDiv.appendChild(deleteBtn);
 
     workRecordsContainer.appendChild(recordDiv);
-});
-
+}
 
 
 
@@ -331,7 +332,9 @@ document.getElementById('tabAddButton').addEventListener('click', function () {
 
 
 // 2024.12.23 탭 클릭시 테이블 변경 - 승래
-document.getElementById('tabButtons').addEventListener('click', function(){
+document.getElementById('tabButtons').addEventListener('click', clickTabs);
+
+function clickTabs(){
     document.querySelectorAll('.tabLabel').forEach((tab, index)=>{
         tab.addEventListener('click',function(){
             const alltabs = document.querySelectorAll('.tabLabel');
@@ -348,9 +351,7 @@ document.getElementById('tabButtons').addEventListener('click', function(){
             tables[index].classList.add('active');
         });
     });
-});
-
-
+};
 
 
 // 2024.12.22 엑샐 내보내기 기능 - 승래
@@ -363,12 +364,12 @@ document.getElementById('toExcel').addEventListener('click',function(){
     }
 });
 
-
+// 엑셀 변환 함수
 function exportExcel(){
     let wb = XLSX.utils.book_new();
-
     let ws = excelHandler.getWorksheet();
-
+    
+	// 셀 스타일 지정
     for ( i in ws ) {
         if ( typeof ( ws[ i ] ) != "object" ) continue;
         let cell = XLSX.utils.decode_cell( i );
@@ -441,9 +442,9 @@ let excelHandler = {
 }
 
 function s2ab(s) { 
-    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
-    var view = new Uint8Array(buf);  //create uint8array as viewer
-    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;    
 }
 
@@ -526,9 +527,9 @@ function kakaoAPI() {
     Kakao.Link.sendDefault({
         objectType: 'feed',
         content: {
-            title: '근무시간 및 급여내역 입니다',
-            description: workText,
-            imageUrl: 'https://example.com/image.png',
+            title: userName+'님의 근무시간 및 급여내역 입니다', // 공유하기 제목
+            description: workText,  // 공유하기 텍스트
+            imageUrl: 'https://example.com/image.png', //임시 이미지
             link: {
                 webUrl: 'http://localhost:8080',
                 mobileWebUrl: 'http://localhost:8080',
