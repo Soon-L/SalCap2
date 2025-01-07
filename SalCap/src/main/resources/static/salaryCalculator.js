@@ -1,55 +1,52 @@
 // 근무 기록 추가 버튼 이벤트
-document.getElementById('addWorkRecordButton').addEventListener('click', add_work_record);
+document.getElementById('addWorkRecordButton').addEventListener('click', addWorkRecord);
 
-function add_work_record(){
+// 새로운 필드 생성 함수
+function createField(labelText, inputType) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'field-wrapper';
+
+    const label = document.createElement('label');
+    label.textContent = labelText;
+
+    const input = document.createElement('input');
+    input.type = inputType;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+
+    return wrapper;
+}
+
+// 삭제 버튼 생성 함수
+function createDeleteButton() {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn delete';
+    deleteBtn.textContent = '삭제';
+
+    deleteBtn.addEventListener('click', function () {
+        deleteBtn.parentNode.remove();
+    });
+
+    return deleteBtn;
+}
+
+// 새로운 근무 기록 추가 함수
+function addWorkRecord() {
     const workRecordsContainer = document.getElementById('workRecordsContainer');
 
-    // 새로운 근무 기록 필드 생성
     const recordDiv = document.createElement('div');
     recordDiv.className = 'input-group';
 
-    // 날짜 입력 필드
-    const dateWrapper = document.createElement('div');
-    dateWrapper.className = 'field-wrapper';
-    const dateLabel = document.createElement('label');
-    dateLabel.textContent = '근무 날짜';
-    const dateInput = document.createElement('input');
-    dateInput.type = 'date';
-    dateWrapper.appendChild(dateLabel);
-    dateWrapper.appendChild(dateInput);
+    // 필드 추가
+    const dateField = createField('근무 날짜', 'date');
+    const startTimeField = createField('시작 시간', 'time');
+    const endTimeField = createField('종료 시간', 'time');
+    const deleteBtn = createDeleteButton();
 
-    // 시작 시간 입력 필드
-    const startWrapper = document.createElement('div');
-    startWrapper.className = 'field-wrapper';
-    const startLabel = document.createElement('label');
-    startLabel.textContent = '시작 시간';
-    const startTimeInput = document.createElement('input');
-    startTimeInput.type = 'time';
-    startWrapper.appendChild(startLabel);
-    startWrapper.appendChild(startTimeInput);
-
-    // 종료 시간 입력 필드
-    const endWrapper = document.createElement('div');
-    endWrapper.className = 'field-wrapper';
-    const endLabel = document.createElement('label');
-    endLabel.textContent = '종료 시간';
-    const endTimeInput = document.createElement('input');
-    endTimeInput.type = 'time';
-    endWrapper.appendChild(endLabel);
-    endWrapper.appendChild(endTimeInput);
-
-    // 근무 기록 삭제 버튼
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn delete';
-    deleteBtn.textContent = "삭제";
-    deleteBtn.addEventListener('click',function(){
-        deleteBtn.parentNode.remove();
-    })
-
-    // DOM에 추가 (각 필드를 한 줄씩 출력)
-    recordDiv.appendChild(dateWrapper);
-    recordDiv.appendChild(startWrapper);
-    recordDiv.appendChild(endWrapper);
+    recordDiv.appendChild(dateField);
+    recordDiv.appendChild(startTimeField);
+    recordDiv.appendChild(endTimeField);
     recordDiv.appendChild(deleteBtn);
 
     workRecordsContainer.appendChild(recordDiv);
@@ -359,42 +356,6 @@ function tabLaels(nowTab){
 
 
 ////////함수 모음 끝//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-// 2024.12.22 탭 클릭시 정보 띄우기(반복 불가) - 이순
-// 탭 클릭시 정보 불러오기 이벤트
-
-// let tabContents = document.getElementById('tabButtons');
-// tabContents.addEventListener('click', function(){
-//     let table = document.getElementById('table'); // 데이터 저장 테이블
-//     let rowList = table.rows;
-//     let tabLabelLength = tabContents.childElementCount;
-//     let tabLabelList = tabContents.children;
-
-//     for(let i = 1; i<rowList.length; i++){
-//         for(let j = 0; j<tabLabelLength; j++){
-//         let row = rowList[i];
-//         let cell = row.cells[1];
-//         let tabName = tabLabelList[j]
-
-//         // 2024.12.22 수정중(한번만 클릭 가능) - 이순
-//             if(cell.textContent == tabName.textContent){
-//                 let name = row.cells[1].textContent;
-//                 let totalMinutesWorked = row.cells[5].textContent;
-//                 let totalSalary = row.cells[8].textContent;
-//                 document.getElementById('tabContents').textContent = `${name}님의 총 근무 시간은 ${totalMinutesWorked}분이며, 총 급여는 ${totalSalary}원입니다.`;
-//                 tabContents.style.display = 'block'; // 결과 보여줌 
-//             }
-//         }
-//     }
-// })
-
-
 
 
 // 2024.12.23 탭 클릭시 테이블 변경 - 승래
