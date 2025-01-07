@@ -1,10 +1,12 @@
 // 근무 기록 추가 버튼 이벤트
+
 document.getElementById('addWorkRecordButton').addEventListener('click', addWorkRecord);
 
 // 새로운 필드 생성 함수
 function createField(labelText, inputType) {
     const wrapper = document.createElement('div');
     wrapper.className = 'field-wrapper';
+
 
     const label = document.createElement('label');
     label.textContent = labelText;
@@ -50,7 +52,10 @@ function addWorkRecord() {
     recordDiv.appendChild(deleteBtn);
 
     workRecordsContainer.appendChild(recordDiv);
-}
+});
+
+
+
 
 
 
@@ -85,34 +90,32 @@ document.getElementById('calculateButton').addEventListener('click', function ()
 
 
         totalMinutesWorked += minutesWorked; // 총 근무 시간(분) 계산
+    
+
+        // 총 급여 계산
+        let totalSalary = totalMinutesWorked * wagePerMinute;
+
+        // 원천징수 적용 여부 확인
+        if (withholdingTaxChecked) {
+            totalSalary *= (1 - 0.033); // 원천징수 적용
+        }
+
+        // 2024.12.21 계산시 결과 보여주기 추가 - 이순
+        // 결과 출력
+        if(employeeName === '' || wagePerMinute === NaN || dateInput === NaN || startTimeInput>endTimeInput){
+            return;
+        }
+        if(calculateFlag){
+            document.getElementById('result').textContent =
+            `${employeeName}님의 총 근무 시간은 ${totalMinutesWorked}분이며, 총 급여는 ${totalSalary.toLocaleString()}원입니다.`;
+            result.style.display = 'block'; // 결과 보여줌
+        }else{
+            return;
+        }
     });
-
-    // 총 급여 계산
-    let totalSalary = totalMinutesWorked * wagePerMinute;
-
-    // 원천징수 적용 여부 확인
-    if (withholdingTaxChecked) {
-        totalSalary *= (1 - 0.033); // 원천징수 적용
-    }
-
-    // 2024.12.21 계산시 결과 보여주기 추가 - 이순
-    // 결과 출력
-    if(calculateFlag){
-        document.getElementById('result').textContent =
-        `${employeeName}님의 총 근무 시간은 ${totalMinutesWorked}분이며, 총 급여는 ${totalSalary.toLocaleString()}원입니다.`;
-        result.style.display = 'block'; // 결과 보여줌
-    }else{
-        return;
-    }
 });
 
 
-
-
-
-// 모둘화 성공
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 모듈화 중
 
 
 
@@ -130,7 +133,6 @@ document.getElementById('tabAddButton').addEventListener('click', function () {
     const withholdingTaxChecked = document.getElementById('withholdingTax'); // 원천징수 체크 여부
     const result = document.getElementById('result'); // 계산 결과
     const count = document.getElementById('count');
-    let totalMinutesWorked = 0;
     
 
         // 2024.12.26 계산 안하면 저장 안됨 - 이순
@@ -158,9 +160,8 @@ document.getElementById('tabAddButton').addEventListener('click', function () {
         
 
 
-
         // 계산한 근로자 탭 라벨 생성
-        tabLaels(nowTab);
+        tabLaels(nowTab, tabButtons);
 
 
          // 근무 정보 추출
@@ -192,170 +193,23 @@ document.getElementById('tabAddButton').addEventListener('click', function () {
             
             
             // 테이블에 데이터 저장 이벤트
-            function saveData(nowTab, count, employeeName, dateInput, startTimeInput, endTimeInput, minutesWorked, wagePerMinute, withholdingTaxChecked){
-                const table = document.querySelector('.dataTable').querySelector('.'+nowTab);
-                const tableRow = document.createElement('tr');
-                const num = document.createElement('td'); // 카운트
-                const name = document.createElement('td'); // 근로자명
-                const date = document.createElement('td'); // 근무일자
-                const startTime = document.createElement('td'); // 시작시간
-                const endTime = document.createElement('td'); // 종료시간
-                const totalTime = document.createElement('td'); // 총 근무시간(분)
-                const minuteSalary = document.createElement('td'); // 분당급여
-                const tax = document.createElement('td'); // 원천징수
-                const allSalary = document.createElement('td'); // 총 급여
-    
-                // 부모자식 설정
-                table.querySelector('tbody').appendChild(tableRow);
-                tableRow.appendChild(num)
-                tableRow.appendChild(name);
-                tableRow.appendChild(date);
-                tableRow.appendChild(startTime);
-                tableRow.appendChild(endTime);
-                tableRow.appendChild(totalTime)
-                tableRow.appendChild(minuteSalary);
-                tableRow.appendChild(tax);
-                tableRow.appendChild(allSalary);
-    
-    
-        
-        
-                // 2024.12.21 오류 수정 - 이순
-                //데이터 넣기
-                count.textContent = Number(count.textContent) + 1;
-                num.textContent = count.textContent; //1씩 증가
-                name.textContent = employeeName.value; // 이름
-                date.textContent = dateInput; // 근무일자
-                startTime.textContent = startTimeInput; // 시작시간
-                endTime.textContent = endTimeInput; // 종료시간
-                totalTime.textContent = minutesWorked;// 총 근무시간(분)
-                minuteSalary.textContent = wagePerMinute.value; // 분당급여
-                tax.textContent = 'X'; // 원천징수 안했을경우
-                allSalary.textContent = totalMinutesWorked * wagePerMinute.value;
-                // 원천징수 했을경우
-                if(withholdingTaxChecked.checked === true){
-                    tax.textContent = 'O';
-                    allSalary.textContent = totalMinutesWorked * wagePerMinute.value *(1 - 0.033);
-                } 
-            }
-
-            saveData(nowTab, count, employeeName, dateInput, startTimeInput, endTimeInput, minutesWorked, wagePerMinute, withholdingTaxChecked);
+            saveData(nowTab, count, employeeName, dateInput, startTimeInput, endTimeInput, 
+                     minutesWorked, totalMinutesWorked, wagePerMinute, withholdingTaxChecked);
 
             
         });
 
-
-
-        //결과 데이터 행
-        resultDiv();
-
-
+        //테이블 맨 밑 결과 행
+        resultDiv(newTable);
 
         // 기존 탭 정보 리셋
-        employeeName.value = ''; // 직원 이름
-        wagePerMinute.value = ''; // 분당 급여
-        withholdingTaxChecked.checked = false; // 원천징수
-        result.textContent = '';
-       
-        //////근무기록 input창 삭제(초기화)
-        const parent = document.getElementById('workRecordsContainer');
-        while(parent.firstChild)  {
-            parent.removeChild(parent.firstChild);
-        }
+
+        resetImpor(employeeName,  wagePerMinute, withholdingTaxChecked,  result);
+
 });
 
 
 
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// 함수 모음
-
-// 입력 값 예외처리
-function exception(employeeName, wagePerMinute, workRecord){
-    if (!employeeName) {
-        alert("직원 이름을 입력하세요.");
-        return;
-    }
-
-    if (isNaN(wagePerMinute) || wagePerMinute <= 0) {
-        alert("유효한 분당 급여를 입력하세요.");
-        return;
-    }
-    if(workRecord===0){
-        alert("근무기록이 입력되지 않았습니다.");
-        return;
-    }
-
-}
-
-// 근무기록 예외처리
-function inputException(dateInput, startTimeInput, endTimeInput){
-    if (!dateInput || !startTimeInput || !endTimeInput) {
-        alert("모든 날짜와 시간을 입력하세요.");
-        calculateFlag = false;
-        return;
-    }
-}
-
-// 근무시간 계산
-    // 시작 시간과 종료 시간을 Date 객체로 변환
-    function calculateDate(dateInput, startTimeInput, endTimeInput){
-        const startDateTime = new Date(`${dateInput}T${startTimeInput}`);
-        const endDateTime = new Date(`${dateInput}T${endTimeInput}`);
-
-        // 시간 차이를 분 단위로 계산
-        const minutesWorked = (endDateTime - startDateTime) / (1000 * 60); // 밀리초 -> 분 변환
-
-        if (minutesWorked <= 0) {
-            alert("종료 시간이 시작 시간보다 빨라서는 안 됩니다.");
-            calculateFlag = false;
-            return;
-        }
-        return minutesWorked;
-    }
-
-
-// 기존 테이블 숨기기
-function hiddenTable(alltable){
-    alltable.forEach((tab) =>{
-        tab.classList.add('hidden');
-    })
-}
-
-///////// 2024.12.25 결과 데이터 행 - 이순 /////////////////////////
-function resultDiv(){
-    const resultData = document.createElement('div'); // 맨 밑 결과 셀
-    resultData.className = 'resultData';
-    
-    // 부모자식 설정
-    newTable.appendChild(resultData);
-    resultData.textContent = result.textContent; // 결과값 넣기
-}
-
-// 계산한 근로자 탭 라벨 생성
-function tabLaels(nowTab){
-    document.querySelectorAll('.tabLabel').forEach((label)=>{
-        label.classList.remove('active');
-    });
-    const tabLabel = document.createElement('button');
-    tabLabel.className = 'btn tabLabel active '+nowTab;
-    tabLabel.textContent = `${employeeName.value}`;
-    // 부모자식 설정
-    tabButtons.appendChild(tabLabel);
-}
-
-
-
-
-
-
-
-
-
-////////함수 모음 끝//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // 2024.12.23 탭 클릭시 테이블 변경 - 승래
@@ -477,44 +331,7 @@ function s2ab(s) {
 
 
 
-// 2024.12.23 PDF 변환 기능(페이지 잘림 에러) - 이순
-function downloadPDF() {
-    let element = document.getElementById('saveTable'); // PDF로 변환하고자 하는 HTML 요소를 선택합니다. 예: document.getElementById('your-element-id')
-
-    html2canvas(element).then((canvas) => {
-        let imgData = canvas.toDataURL('image/png');
-        let pdf = new jspdf.jsPDF();
-
-        let imgWidth = 190; // 이미지 가로 길이(mm) / A4 기준 210mm
-        let pageHeight = imgWidth * 1.414;  // 출력 페이지 세로 길이 계산 A4 기준
-        let imgHeight = canvas.height * imgWidth / canvas.width;
-        let heightLeft = imgHeight;
-        let margin = 10; // 출력 페이지 여백설정
-        
-        //let position = (0, 10);
-        let position = (0, 10);
-
-
-        // 첫 페이지 출력
-      pd.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;f
-
-      // 한 페이지 이상일 경우 루프 돌면서 출력
-      while (heightLeft >= 0) {			// 35
-        position = heightLeft - imgHeight;
-        //position = position - 20 ;		// -25
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-
-        pdf.save("download.pdf");
-
-        
-    });
-}
-// 2024.12.27 데이터 미저장시 예외처리 - 이순
+// 2024.12.27 pdf 변환시 데이터 미저장 예외처리 - 이순
 document.getElementById('toPdf').addEventListener('click', function(){
     const resultData = document.querySelector('.resultData');
     if(!resultData){
@@ -523,6 +340,7 @@ document.getElementById('toPdf').addEventListener('click', function(){
     }
     downloadPDF();
 })
+
 
 
 
@@ -573,4 +391,194 @@ function kakaoAPI() {
         ],
     });
 }
+
+
+
+
+
+
+
+
+///////////////// 순 함수 모음 시작 ///////////////////////////////////////////////////////////////////////////////////////
+
+
+// 입력 값 예외처리
+function exception(employeeName, wagePerMinute, workRecord){
+    if (!employeeName) {
+        alert("직원 이름을 입력하세요.");
+        return;
+    }
+
+    if (isNaN(wagePerMinute) || wagePerMinute <= 0) {
+        alert("유효한 분당 급여를 입력하세요.");
+        return;
+    }
+    if(workRecord===0){
+        alert("근무기록이 입력되지 않았습니다.");
+        return;
+    }
+
+}
+
+// 근무기록 예외처리
+function inputException(dateInput, startTimeInput, endTimeInput){
+    if (!dateInput || !startTimeInput || !endTimeInput) {
+        alert("모든 날짜와 시간을 입력하세요.");
+        calculateFlag = false;
+        return;
+    }
+}
+
+// 근무시간 계산
+    // 시작 시간과 종료 시간을 Date 객체로 변환
+    function calculateDate(dateInput, startTimeInput, endTimeInput){
+        const startDateTime = new Date(`${dateInput}T${startTimeInput}`);
+        const endDateTime = new Date(`${dateInput}T${endTimeInput}`);
+
+        // 시간 차이를 분 단위로 계산
+        const minutesWorked = (endDateTime - startDateTime) / (1000 * 60); // 밀리초 -> 분 변환
+
+        if (minutesWorked <= 0) {
+            alert("종료 시간이 시작 시간보다 빨라서는 안 됩니다.");
+            calculateFlag = false;
+            return;
+        }
+        return minutesWorked;
+    }
+
+
+// 기존 테이블 숨기기
+function hiddenTable(alltable){
+    alltable.forEach((tab) =>{
+        tab.classList.add('hidden');
+    })
+}
+
+//테이블 맨 밑 결과 행
+function resultDiv(newTable){
+    const resultData = document.createElement('div'); // 맨 밑 결과 셀
+    resultData.className = 'resultData';
+    
+    // 부모자식 설정
+    newTable.appendChild(resultData);
+    resultData.textContent = result.textContent; // 결과값 넣기
+}
+
+// 계산한 근로자 탭 라벨 생성
+function tabLaels(nowTab, tabButtons){
+    document.querySelectorAll('.tabLabel').forEach((label)=>{
+        label.classList.remove('active');
+    });
+    const tabLabel = document.createElement('button');
+    tabLabel.className = 'btn tabLabel active '+nowTab;
+    tabLabel.textContent = `${employeeName.value}`;
+    // 부모자식 설정
+    tabButtons.appendChild(tabLabel);
+}
+
+
+// 테이블에 데이터 저장 이벤트
+function saveData(nowTab, count, employeeName, dateInput, startTimeInput, endTimeInput, 
+                  minutesWorked, totalMinutesWorked, wagePerMinute, withholdingTaxChecked){
+    const table = document.querySelector('.dataTable').querySelector('.'+nowTab);
+    const tableRow = document.createElement('tr');
+    const num = document.createElement('td'); // 카운트
+    const name = document.createElement('td'); // 근로자명
+    const date = document.createElement('td'); // 근무일자
+    const startTime = document.createElement('td'); // 시작시간
+    const endTime = document.createElement('td'); // 종료시간
+    const totalTime = document.createElement('td'); // 총 근무시간(분)
+    const minuteSalary = document.createElement('td'); // 분당급여
+    const tax = document.createElement('td'); // 원천징수
+    const allSalary = document.createElement('td'); // 총 급여
+    
+    // 부모자식 설정
+    table.querySelector('tbody').appendChild(tableRow);
+    tableRow.appendChild(num)
+    tableRow.appendChild(name);
+    tableRow.appendChild(date);
+    tableRow.appendChild(startTime);
+    tableRow.appendChild(endTime);
+    tableRow.appendChild(totalTime)
+    tableRow.appendChild(minuteSalary);
+    tableRow.appendChild(tax);
+    tableRow.appendChild(allSalary);
+    
+    
+        
+        
+    // 2024.12.21 오류 수정 - 이순
+    //데이터 넣기
+    count.textContent = Number(count.textContent) + 1;
+    num.textContent = count.textContent; //1씩 증가
+    name.textContent = employeeName.value; // 이름
+    date.textContent = dateInput; // 근무일자
+    startTime.textContent = startTimeInput; // 시작시간
+    endTime.textContent = endTimeInput; // 종료시간
+    totalTime.textContent = minutesWorked;// 총 근무시간(분)
+    minuteSalary.textContent = wagePerMinute.value; // 분당급여
+    tax.textContent = 'X'; // 원천징수 안했을경우
+    allSalary.textContent = totalMinutesWorked * wagePerMinute.value;
+    // 원천징수 했을경우
+    if(withholdingTaxChecked.checked === true){
+        tax.textContent = 'O';
+        allSalary.textContent = totalMinutesWorked * wagePerMinute.value *(1 - 0.033);
+    } 
+}
+
+// 기존 탭 정보 리셋
+function resetImpor(employeeName,  wagePerMinute, withholdingTaxChecked,  result){
+    employeeName.value = ''; // 직원 이름
+    wagePerMinute.value = ''; // 분당 급여
+    withholdingTaxChecked.checked = false; // 원천징수
+    result.textContent = '';
+
+    //////근무기록 input창 삭제(초기화)
+    const parent = document.getElementById('workRecordsContainer');
+    while(parent.firstChild)  {
+        parent.removeChild(parent.firstChild);
+    }    
+   
+}
+
+
+// 2024.12.23 PDF 변환 기능(페이지 잘림 에러) - 이순
+// 2024.12.27 페이지 에러 (임시)포기선언 - 이순
+function downloadPDF() {
+    let element = document.getElementById('saveTable'); // PDF로 변환하고자 하는 HTML 요소를 선택합니다. 예: document.getElementById('your-element-id')
+
+    html2canvas(element).then((canvas) => {
+        let imgData = canvas.toDataURL('image/png');
+
+        let imgWidth = 190; // 이미지 가로 길이(mm) / A4 기준 210mm
+        let pageHeight = imgWidth * 1.414; //출력 페이지 세로 길이 계산 A4 기준
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight; // 남은 이미지 높이
+        let margin = 10; // 출력 페이지 여백설정
+        var doc = new jspdf.jsPDF('p', 'mm','a4');
+        let position = (10, 10); // 2페이지부터 마진이 안 먹어서 임시방편으로 설정정
+
+
+        // 첫 페이지 출력
+        doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+      // 한 페이지 이상일 경우 루프 돌면서 출력
+      while (heightLeft >= 20) {			// 35
+        position = heightLeft - imgHeight
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', margint, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+
+        doc.save("download.pdf");
+
+        
+    });
+}
+
+
+
+///////////// 순 함수 모음 끝 ///////////////////////////////////////////////////////////////////////////////////////////
 
