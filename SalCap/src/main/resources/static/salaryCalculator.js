@@ -1,5 +1,42 @@
-// 근무 기록 추가 버튼 이벤트
+const info = document.querySelectorAll('.info')
+for(let i=0; i<info.length; i++){
+    info[i].addEventListener('click',function(){
+        if(document.getElementById('result').textContent !==''){
+            info[i].querySelector('input').addEventListener('input',function(){
+                document.getElementById('result').textContent='';
+            });
+        }
+    });
+}
 
+const workRecordsContainer = document.getElementById('workRecordsContainer')
+workRecordsContainer.addEventListener('click',function(){
+    const feildWrapper = workRecordsContainer.querySelectorAll('.field-wrapper')
+    for(let i=0; i<feildWrapper.length; i++){
+        feildWrapper[i].addEventListener('click',function(){
+            if(document.getElementById('result').textContent !==''){
+                feildWrapper[i].querySelector('input').addEventListener('input',function(){
+                    document.getElementById('result').textContent='';
+                });
+            }
+        });
+    }
+});
+
+
+// function delete_result(inputSelector, resultSelector = 'result') {
+//     const resultElement = document.getElementById(resultSelector);
+//     if (resultElement && resultElement.textContent !== '') {
+//         const inputElement = inputSelector.querySelector('input');
+//         if (inputElement) {
+//             inputElement.addEventListener('input', () => {
+//                 resultElement.textContent = '';
+//             });
+//         }
+//     }
+// }
+
+// 근무 기록 추가 버튼 이벤트
 document.getElementById('addWorkRecordButton').addEventListener('click', addWorkRecord);
 
 // 새로운 필드 생성 함수
@@ -52,7 +89,7 @@ function addWorkRecord() {
     recordDiv.appendChild(deleteBtn);
 
     workRecordsContainer.appendChild(recordDiv);
-});
+};
 
 
 
@@ -76,7 +113,6 @@ document.getElementById('calculateButton').addEventListener('click', function ()
 
     // 모든 근무 기록 가져오기
     const workRecords = document.querySelectorAll('#workRecordsContainer .input-group');
-
     workRecords.forEach(record => {
         const dateInput = record.querySelector('input[type=date]').value;
         const startTimeInput = record.querySelector('input[type=time]').value;
@@ -102,7 +138,8 @@ document.getElementById('calculateButton').addEventListener('click', function ()
 
         // 2024.12.21 계산시 결과 보여주기 추가 - 이순
         // 결과 출력
-        if(employeeName === '' || wagePerMinute === NaN || dateInput === NaN || startTimeInput>endTimeInput){
+        if(employeeName === '' || wagePerMinute === NaN || dateInput === NaN || startTimeInput>=endTimeInput){
+            calculateFlag = false;
             return;
         }
         if(calculateFlag){
@@ -116,7 +153,26 @@ document.getElementById('calculateButton').addEventListener('click', function ()
 });
 
 
-
+// ///////hidden input에 값 넣는 메소드
+// function input_hidden(name,date,start,end,totalTime,perpay,tax,totalSalary){
+//     const calculatedName = document.getElementById('calculated_name');
+//     const calculatedDate = document.getElementById('calculated_date');
+//     const calculatedStart = document.getElementById('calculated_start');
+//     const calculatedEnd = document.getElementById('calculated_end');
+//     const calculatedTotalTime = document.getElementById('calculated_totalTime');
+//     const calculatedPerpay = document.getElementById('calculated_perpay');
+//     const calculatedTax = document.getElementById('calculated_Tax');
+//     const calculatedTotalSalary = document.getElementById('calculated_totalSalary');
+    
+//     calculatedName.value = name;
+//     calculatedDate. value = date;
+//     calculatedStart.value = start;
+//     calculatedEnd.value = end;
+//     calculatedTotalTime.value = totalTime;
+//     calculatedPerpay.value = perpay;
+//     calculatedTax.value = tax;
+//     calculatedTotalSalary.value = totalSalary;
+// }
 
 
 
