@@ -175,7 +175,6 @@ document.getElementById('calculateButton').addEventListener('click', function ()
             return;
         }
     });
-});
 
 
 // ///////hidden input에 값 넣는 메소드
