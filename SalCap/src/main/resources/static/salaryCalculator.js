@@ -157,6 +157,7 @@ document.getElementById('calculateButton').addEventListener('click', function ()
         `${employeeName}님의 총 근무 시간은 ${totalMinutesWorked}분이며, 총 급여는 ${totalSalary.toLocaleString()}원입니다.`;
         result.style.display = 'block'; // 결과 보여줌
     }else{
+		calculateFlag = false;
         return;
     }
  });
