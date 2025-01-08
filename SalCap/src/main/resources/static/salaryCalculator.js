@@ -1,5 +1,42 @@
-// 근무 기록 추가 버튼 이벤트
+const info = document.querySelectorAll('.info')
+for(let i=0; i<info.length; i++){
+    info[i].addEventListener('click',function(){
+        if(document.getElementById('result').textContent !==''){
+            info[i].querySelector('input').addEventListener('input',function(){
+                document.getElementById('result').textContent='';
+            });
+        }
+    });
+}
 
+const workRecordsContainer = document.getElementById('workRecordsContainer')
+workRecordsContainer.addEventListener('click',function(){
+    const feildWrapper = workRecordsContainer.querySelectorAll('.field-wrapper')
+    for(let i=0; i<feildWrapper.length; i++){
+        feildWrapper[i].addEventListener('click',function(){
+            if(document.getElementById('result').textContent !==''){
+                feildWrapper[i].querySelector('input').addEventListener('input',function(){
+                    document.getElementById('result').textContent='';
+                });
+            }
+        });
+    }
+});
+
+
+// function delete_result(inputSelector, resultSelector = 'result') {
+//     const resultElement = document.getElementById(resultSelector);
+//     if (resultElement && resultElement.textContent !== '') {
+//         const inputElement = inputSelector.querySelector('input');
+//         if (inputElement) {
+//             inputElement.addEventListener('input', () => {
+//                 resultElement.textContent = '';
+//             });
+//         }
+//     }
+// }
+
+// 근무 기록 추가 버튼 이벤트
 document.getElementById('addWorkRecordButton').addEventListener('click', addWorkRecord);
 
 // 새로운 필드 생성 함수
@@ -52,7 +89,7 @@ function addWorkRecord() {
     recordDiv.appendChild(deleteBtn);
 
     workRecordsContainer.appendChild(recordDiv);
-});
+};
 
 
 
@@ -73,17 +110,28 @@ document.getElementById('calculateButton').addEventListener('click', function ()
 
 
     let totalMinutesWorked = 0;
+	let totalSalary = 0;
 
     // 모든 근무 기록 가져오기
     const workRecords = document.querySelectorAll('#workRecordsContainer .input-group');
-
+  
+	let alertCount = 0;
+  
     workRecords.forEach(record => {
         const dateInput = record.querySelector('input[type=date]').value;
         const startTimeInput = record.querySelector('input[type=time]').value;
         const endTimeInput = record.querySelectorAll('input[type=time]')[1].value;
+		
+		if (!dateInput || !startTimeInput || !endTimeInput) {
+		    if(alertCount<1){
+		        alert("모든 날짜와 시간을 입력하세요.");
+		        alertCount++;
+		    }
+		    calculateFlag = false;
+		    return;
 
-        // 근무기록 예외처리
-        inputException(dateInput, startTimeInput, endTimeInput);
+		}
+
 
         // 근무시간 계산
         minutesWorked = calculateDate(dateInput, startTimeInput, endTimeInput);
@@ -93,16 +141,30 @@ document.getElementById('calculateButton').addEventListener('click', function ()
     
 
         // 총 급여 계산
-        let totalSalary = totalMinutesWorked * wagePerMinute;
+        totalSalary = totalMinutesWorked * wagePerMinute;
 
         // 원천징수 적용 여부 확인
         if (withholdingTaxChecked) {
             totalSalary *= (1 - 0.033); // 원천징수 적용
         }
+		
+	});
+
+    // 2024.12.21 계산시 결과 보여주기 추가 - 이순
+    // 결과 출력
+    if(calculateFlag){
+        document.getElementById('result').textContent =
+        `${employeeName}님의 총 근무 시간은 ${totalMinutesWorked}분이며, 총 급여는 ${totalSalary.toLocaleString()}원입니다.`;
+        result.style.display = 'block'; // 결과 보여줌
+    }else{
+        return;
+    }
+
 
         // 2024.12.21 계산시 결과 보여주기 추가 - 이순
         // 결과 출력
-        if(employeeName === '' || wagePerMinute === NaN || dateInput === NaN || startTimeInput>endTimeInput){
+        if(employeeName === '' || wagePerMinute === NaN || dateInput === NaN || startTimeInput>=endTimeInput){
+            calculateFlag = false;
             return;
         }
         if(calculateFlag){
@@ -113,10 +175,28 @@ document.getElementById('calculateButton').addEventListener('click', function ()
             return;
         }
     });
-});
 
 
-
+// ///////hidden input에 값 넣는 메소드
+// function input_hidden(name,date,start,end,totalTime,perpay,tax,totalSalary){
+//     const calculatedName = document.getElementById('calculated_name');
+//     const calculatedDate = document.getElementById('calculated_date');
+//     const calculatedStart = document.getElementById('calculated_start');
+//     const calculatedEnd = document.getElementById('calculated_end');
+//     const calculatedTotalTime = document.getElementById('calculated_totalTime');
+//     const calculatedPerpay = document.getElementById('calculated_perpay');
+//     const calculatedTax = document.getElementById('calculated_Tax');
+//     const calculatedTotalSalary = document.getElementById('calculated_totalSalary');
+    
+//     calculatedName.value = name;
+//     calculatedDate. value = date;
+//     calculatedStart.value = start;
+//     calculatedEnd.value = end;
+//     calculatedTotalTime.value = totalTime;
+//     calculatedPerpay.value = perpay;
+//     calculatedTax.value = tax;
+//     calculatedTotalSalary.value = totalSalary;
+// }
 
 
 
@@ -338,14 +418,9 @@ document.getElementById('toPdf').addEventListener('click', function(){
         alert('데이터를 저장해주세요.');
         return;
     }
-    downloadPDF();
-})
-
-
-
-
-document.getElementById('toPdf').addEventListener('click', function(){
-    downloadPDF();
+	else{
+        downloadPDF();
+	}
 })
 
 
@@ -420,14 +495,7 @@ function exception(employeeName, wagePerMinute, workRecord){
 
 }
 
-// 근무기록 예외처리
-function inputException(dateInput, startTimeInput, endTimeInput){
-    if (!dateInput || !startTimeInput || !endTimeInput) {
-        alert("모든 날짜와 시간을 입력하세요.");
-        calculateFlag = false;
-        return;
-    }
-}
+
 
 // 근무시간 계산
     // 시작 시간과 종료 시간을 Date 객체로 변환
