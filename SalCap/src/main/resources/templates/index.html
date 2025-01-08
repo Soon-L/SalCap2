@@ -258,7 +258,7 @@ body {
         <!-- 직원 정보 입력 -->
         <section class="card glass-effect">
             <h2>직원 정보</h2>
-            <div class="form-group">
+            <div class="form-group info">
                 <label for="employeeName">직원 이름:</label>
                 <input type="text" id="employeeName" placeholder="직원 이름 입력">
             </div>
@@ -273,15 +273,14 @@ body {
         <!-- 급여 계산 -->
         <section class="card glass-effect">
             <h2>급여 설정</h2>
-            <div class="form-group">
+            <div class="form-group info">
                 <label for="wagePerMinute">분당 급여 (원):</label>
                 <input type="number" id="wagePerMinute" placeholder="예: 217">
             </div>
             <!-- 체크박스와 텍스트를 가로 정렬 -->
-            <div class="form-group checkbox-group">
-                <label for="withholdingTax" class="checkbox-label">
-                    <input type="checkbox" id="withholdingTax"> 3.3% 원천징수 적용
-                </label>
+            <div class="form-group info checkbox-group">
+                <label for="withholdingTax" class="checkbox-label"></label>
+                <input type="checkbox" id="withholdingTax"> 3.3% 원천징수 적용
             </div>
             <button id="calculateButton" class="btn success">계산하기</button>
         </section>
@@ -290,6 +289,16 @@ body {
         <section class="card glass-effect result-card">
             <h2>결과</h2>
             <div id="result"></div>
+            <div class="hidden_results">
+                <input type="hidden" id ="calculated_name">
+                <input type="hidden" id ="calculated_date">
+                <input type="hidden" id ="calculated_start">
+                <input type="hidden" id ="calculated_end">
+                <input type="hidden" id ="calculated_totaltime">
+                <input type="hidden" id ="calculated_perpay">
+                <input type="hidden" id ="calculated_tax">
+                <input type="hidden" id ="calculated_totalSalary">
+            </div>
         </section>
 
         <!-- 탭 컨테이너 -->
