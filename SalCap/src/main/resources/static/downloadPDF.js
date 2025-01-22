@@ -1,6 +1,24 @@
-// 2024.12.23 PDF 변환 기능(페이지 잘림 에러) - 이순
-// 2024.12.27 페이지 에러 (임시)포기선언 - 이순
-export function downloadPDF() {
+export function downloadPDF(){
+	const resultData = document.querySelector('.resultData');
+
+	// PDF 생성 버튼 클릭
+	if(!resultData){
+		// PDF 예외처리
+	    alert('데이터를 저장해주세요.');
+	    return;
+	}
+	else{
+		// PDF 생성
+		changePDF();
+	}
+}
+
+
+
+
+
+// PDF 생성
+function changePDF() {
     let element = document.getElementById('saveTable'); // PDF로 변환하고자 하는 HTML 요소를 선택합니다. 예: document.getElementById('your-element-id')
 
     html2canvas(element).then((canvas) => {
